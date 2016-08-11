@@ -1,0 +1,40 @@
+- hosts: local
+  connection: local
+  gather_facts: False
+  vars_files:
+    - "vars/main.yml"
+    - "vars/{{ env }}.yml"
+    - "vars/{{ app_name }}.yml"
+  vars:
+    instance_tier: db
+  pre_tasks:
+    - name: Create security group for a tier
+      ec2_group:
+        name: "{{ db_group }}_cassandra"
+        description: "Enable cassandra ports for {{ db_name }}"
+        vpc_id: "{{ aws_vpc }}"
+        region: "{{ aws_region }}"
+        rules:
+        - proto: tcp
+          from_port: 7000
+          to_port: 7000
+          cidr_ip: [ "0.0.0.0/0" ]
+        - proto: tcp
+          from_port: 7199
+          to_port: 7199
+          cidr_ip: [ "0.0.0.0/0" ]
+        - proto: tcp
+          from_port: 9042
+          to_port: 9042
+          cidr_ip: [ "0.0.0.0/0" ]
+        - proto: tcp
+          from_port: 9160
+          to_port: 9160
+          cidr_ip: [ "0.0.0.0/0" ]
+        - proto: tcp
+          from_port: 61621
+          to_port: 61621
+          cidr_ip: [ "0.0.0.0/0" ]
+      ignore_errors: yes
+  roles:
+    - ec2

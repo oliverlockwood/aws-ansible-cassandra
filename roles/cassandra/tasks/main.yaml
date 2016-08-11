@@ -1,0 +1,29 @@
+- name: Add datastax repository apt key
+  apt_key: url=https://debian.datastax.com/debian/repo_key state=present
+
+- name: Add datastax community repository to apt sources list
+  shell: echo "deb http://debian.datastax.com/community stable main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
+
+- name: Update apt cache
+  apt: update_cache=yes
+
+- name: Install Cassandra
+  apt: pkg=cassandra={{ cassandra_version }} state=installed update-cache=yes force=yes
+
+- name: Configure seeds
+  lineinfile: "dest=/etc/cassandra/cassandra.yaml state=present regexp='^.*- seeds:.*$' line='      - seeds: \"{{ seed_ip }}\"'"
+
+- name: Configure broadcast address
+  lineinfile: "dest=/etc/cassandra/cassandra.yaml state=present regexp='^broadcast_address:(.*)$' line='broadcast_address: {{ inventory_hostname }}'"
+
+- name: Clear listening address
+  lineinfile: "dest=/etc/cassandra/cassandra.yaml state=present regexp='^listen_address:(.*)$' line='listen_address:'"
+
+#- name: Cassandra Java environment variable file
+#  template: src={{ cassandra_env_file }} dest=/etc/dse/cassandra/cassandra-env.sh owner={{ cassandra_user }} mode=0640
+#
+#- name: Configure Cassandra logging
+#  template: src=log4j-server.properties.j2 dest=/etc/dse/cassandra/log4j-server.properties
+#
+#- name: Configure DSE Start wait timeout
+#  lineinfile: dest=/etc/default/dse state=present regexp='^WAIT_FOR_START=(.*)$' line='WAIT_FOR_START={{ cassandra_wait_for_start }}'

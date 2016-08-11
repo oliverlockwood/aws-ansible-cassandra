@@ -1,0 +1,46 @@
+db_ami: "{{ aws_ami }}"
+db_group: "{{ env }}-SG{{ db_name }}Db"
+db_group_cassandra: "{{ db_group }}_cassandra"
+db_groups: "['{{ db_group }}', '{{ db_group_cassandra }}']"
+
+db_instance_devices: ['/dev/xvdb', '/dev/xvdc']
+
+aws_ami: ami-55452e26
+
+#######
+
+security_group_def:
+  db:
+    - name: "{{ db_group }}"
+      description: Dummy port for {{ db_name }}
+      port: 80
+
+subnet_access: [ "{{ db_subnet_1a }}", "{{ db_subnet_1b }}", "{{ app_subnet_1a }}", "{{ app_subnet_1b }}" ]
+
+config:
+  db:
+    ami: "{{ db_ami }}"
+    group: "{{ db_groups }}"
+    a:
+      instance_type: "{{ db_size }}"
+      instance_count: "{{ db_count_1a }}"
+      subnet_id: "{{ aws_db_subnet_1a }}"
+      subnet_ip: "{{ db_subnet_1a }}"
+    b:
+      instance_type: "{{ db_size }}"
+      instance_count: "{{ db_count_1b }}"
+      subnet_id: "{{ aws_db_subnet_1b }}"
+      subnet_ip: "{{ db_subnet_1b }}"
+
+disks:
+  - name: cassandra
+    block_devices: "{{ db_instance_devices }}"
+    mount_point: /var/lib/cassandra
+    fstype: ext4
+    is_secure: yes
+
+cassandra_cluster_name: OglCassandraCluster
+cassandra_seeds: [ "{{ db_name }}db-01a.{{ env }}.oliverlockwood.com" ]
+
+# Monitoring
+db_monitoring_hostgroup: cassandra

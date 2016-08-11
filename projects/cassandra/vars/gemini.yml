@@ -1,0 +1,5 @@
+db_name: "{{ app_name }}"
+db_size: t2.micro
+db_count_1a: 2
+db_count_1b: 2
+cassandra_version: 2.1.5

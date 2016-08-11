@@ -1,0 +1,19 @@
+- name: Set up machines
+  hosts: tag_Name_{{ env }}_{{ app_name }}_db_{{ zone }}
+  become: yes
+  gather_facts: true
+  vars_files:
+    - "vars/main.yml"
+    - "vars/{{ app_name }}.yml"
+  roles:
+    - basic_setup
+    - cassandra
+#    - dns
+#    - sysctl
+#    - proxy
+#    - apt
+#    - encrypted-mounts
+#    - ntp
+#    - rsyslog
+#    - monitoring
+#    - java

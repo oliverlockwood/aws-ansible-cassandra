@@ -1,0 +1,25 @@
+- name: Start Cassandra on seed nodes
+  hosts: tag_Name_{{ env }}_{{ app_name }}_db_*
+  gather_facts: true
+  become: yes
+  serial: 1
+  vars_files:
+    - "vars/main.yml"
+    - "vars/{{ app_name }}.yml"
+  tasks:
+    - debug: var=ec2_tag_dnsname
+    - include: ../../roles/cassandra/tasks/restart_node.yml
+      vars:
+        cassandra_node_filter: "ec2_tag_dnsname in cassandra_seeds"
+
+- name: Start Cassandra on other nodes
+  hosts: tag_Name_{{ env }}_{{ app_name }}_db_*
+  become: yes
+  serial: 1
+  vars_files:
+    - "vars/main.yml"
+    - "vars/{{ app_name }}.yml"
+  tasks:
+    - include: ../../roles/cassandra/tasks/restart_node.yml
+      vars:
+        cassandra_node_filter: "ec2_tag_dnsname not in cassandra_seeds"

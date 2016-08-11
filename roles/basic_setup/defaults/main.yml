@@ -1,0 +1,2 @@
+java_apt_repo: ppa:webupd8team/java
+java_version: oracle-java8-installer

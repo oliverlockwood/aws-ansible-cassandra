@@ -1,0 +1,70 @@
+---
+
+- debug: msg="EC2 {{ env }} zone {{ zone }} tier {{ instance_tier }} groups {{ config[instance_tier].group }} "
+
+###########################
+## Create Security Group ##
+###########################
+- name: Create security group for a tier
+  ec2_group:
+    name: "{{ item.name }}"
+    description: "{{ item.description }}"
+    vpc_id: "{{ aws_vpc }}"
+    region: "{{ aws_region }}"
+    rules:
+    - proto: tcp
+      from_port: "{{ item.port }}"
+      to_port: "{{ item.port }}"
+      cidr_ip: 0.0.0.0/0
+    - proto: tcp
+      from_port: 22
+      to_port: 22
+      cidr_ip: 0.0.0.0/0
+  with_items: "{{ security_group_def[instance_tier] }}"
+
+###########################
+## Create EC2 Instances  ##
+###########################
+- name: Create ec2 instances for a tier in one zone
+  ec2:
+    instance_type: "{{ config[instance_tier][zone].instance_type }}"
+    region: "{{ aws_region }}"
+    image: "{{ config[instance_tier].ami }}"
+    key_name: "{{ aws_key_name }}"
+    vpc_subnet_id: "{{ config[instance_tier][zone].subnet_id }}"
+    group: "{{ config[instance_tier].group }}"
+    instance_tags:
+      env: "{{ env }}"
+      Name: "{{ env }}:{{ app_name }}:{{ instance_tier }}:{{ zone }}"
+      role: "{{ instance_tier }}tier"
+    exact_count: "{{ config[instance_tier][zone].instance_count }}"
+    count_tag:
+      Name: "{{ env }}:{{ app_name }}:{{ instance_tier }}:{{ zone }}"
+      role: "{{ instance_tier }}tier"
+    wait: "{{ ec2_wait }}"
+    assign_public_ip: yes
+  register: ec2instances
+
+- debug: msg="EBS Registered Instances  {{ ec2instances.tagged_instances }} "
+
+- name: Update tags on the instances
+  ec2_tag: resource={{ item.1.id }} state=present region=eu-west-1
+  args:
+    tags:
+      dnsname: "{{ app_name }}{{ instance_tier }}-{{ '%02d' |format(item.0 + 1) }}{{ zone }}.{{ aws_dns_zone }}"
+      Environment: "{{ env }}"
+      Project: "{{ app_name }}"
+      InstanceName: "{{ env }}:{{ app_name }}:{{ instance_tier }}:{{ zone }}:{{ '%02d' |format(item.0 + 1) }}"
+  with_indexed_items: "{{ ec2instances.tagged_instances }}"
+
+###########################
+## Wait for ssh to be up ##
+###########################
+- name: Wait for ssh
+  wait_for: port=22 host={{ item.public_ip }}
+  with_items: "{{ ec2instances.tagged_instances }}"
+
+- name: Store first public IP address as seed ip to varfile
+  shell: echo "seed_ip={{ item.public_ip }}" >> {{ varfile }}
+  with_items: "{{ ec2instances.tagged_instances }}"
+

@@ -1,0 +1,17 @@
+---
+
+aws_key_name: "{{ env }}"
+aws_dns_zone: "{{ env }}.oliverlockwood.com"
+
+web_ami: "{{ aws_ami }}"
+web_group: "{{ env }}-SG{{ app_name }}Web"
+web_size: t2.micro
+
+app_ami: "{{ aws_ami }}"
+app_group: "{{ env }}-SG{{ app_name }}App"
+app_size: t2.micro
+
+mngt_ami: "{{ aws_ami }}"
+mngt_group: "{{ env }}-SG{{ app_name }}Mngt"
+
+ec2_wait: yes

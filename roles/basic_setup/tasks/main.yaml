@@ -1,0 +1,11 @@
+- name: Add Java 8 apt repository
+  apt_repository: repo="{{ java_apt_repo }}" state=present
+
+- name: Update apt cache
+  apt: update_cache=yes
+
+- name: Automatically select the Oracle License
+  shell: echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections
+
+- name: Install JRE
+  apt: pkg={{ java_version }} state=latest update-cache=yes force=yes

@@ -1,0 +1,10 @@
+- hosts: tag_Name_{{ env }}_{{ app_name }}_db_{{ zone }}
+  become: yes
+  gather_facts: false
+  vars_files:
+    - "vars/main.yml"
+    - "vars/{{ app_name }}.yml"
+  vars:
+    cassandra_node_filter: "ec2_tag_dnsname in cassandra_seeds"
+  roles:
+    - cqlmigrate-locks-keyspace

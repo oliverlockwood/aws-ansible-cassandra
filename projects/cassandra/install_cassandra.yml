@@ -8,12 +8,3 @@
   roles:
     - basic_setup
     - cassandra
-#    - dns
-#    - sysctl
-#    - proxy
-#    - apt
-#    - encrypted-mounts
-#    - ntp
-#    - rsyslog
-#    - monitoring
-#    - java

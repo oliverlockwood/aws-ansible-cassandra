@@ -15,7 +15,7 @@ function create_cassandra_stack {
     local db_name=$2
     local varfile=$(mktemp -t $(basename $0).XXXXXX)
 
-    echo "Creating DSE stack ${db_name} in ${env}, using ${varfile} for temporary variable storage"
+    echo "Creating Cassandra stack ${db_name} in ${env}, using ${varfile} for temporary variable storage"
 
     # Create nodes in zones A and B
     ansible-playbook -vvvv -i local projects/cassandra/create_cluster.yml -e "app_name=${db_name} env=${env} zone=a varfile=${varfile}"

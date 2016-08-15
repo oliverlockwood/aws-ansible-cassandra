@@ -1,5 +1,4 @@
 ---
-
 aws_key_name: "{{ env }}"
 aws_dns_zone: "{{ env }}.oliverlockwood.com"
 

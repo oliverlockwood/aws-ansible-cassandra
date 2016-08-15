@@ -24,12 +24,3 @@
 
 - name: Configure broadcast rpc address
   lineinfile: "dest=/etc/cassandra/cassandra.yaml state=present regexp='^# broadcast_rpc_address:(.*)$' line='broadcast_rpc_address: {{ inventory_hostname }}'"
-
-#- name: Cassandra Java environment variable file
-#  template: src={{ cassandra_env_file }} dest=/etc/dse/cassandra/cassandra-env.sh owner={{ cassandra_user }} mode=0640
-#
-#- name: Configure Cassandra logging
-#  template: src=log4j-server.properties.j2 dest=/etc/dse/cassandra/log4j-server.properties
-#
-#- name: Configure DSE Start wait timeout
-#  lineinfile: dest=/etc/default/dse state=present regexp='^WAIT_FOR_START=(.*)$' line='WAIT_FOR_START={{ cassandra_wait_for_start }}'

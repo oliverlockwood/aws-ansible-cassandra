@@ -14,10 +14,16 @@
   lineinfile: "dest=/etc/cassandra/cassandra.yaml state=present regexp='^.*- seeds:.*$' line='      - seeds: \"{{ seed_ip }}\"'"
 
 - name: Configure broadcast address
-  lineinfile: "dest=/etc/cassandra/cassandra.yaml state=present regexp='^broadcast_address:(.*)$' line='broadcast_address: {{ inventory_hostname }}'"
+  lineinfile: "dest=/etc/cassandra/cassandra.yaml state=present regexp='^# broadcast_address:(.*)$' line='broadcast_address: {{ inventory_hostname }}'"
 
-- name: Clear listening address
-  lineinfile: "dest=/etc/cassandra/cassandra.yaml state=present regexp='^listen_address:(.*)$' line='listen_address:'"
+- name: Configure listening address
+  lineinfile: "dest=/etc/cassandra/cassandra.yaml state=present regexp='^listen_address:(.*)$' line='listen_address: {{ ansible_default_ipv4.address }}'"
+
+- name: Configure rpc address
+  lineinfile: "dest=/etc/cassandra/cassandra.yaml state=present regexp='^rpc_address:(.*)$' line='rpc_address: {{ ansible_default_ipv4.address }}'"
+
+- name: Configure broadcast rpc address
+  lineinfile: "dest=/etc/cassandra/cassandra.yaml state=present regexp='^# broadcast_rpc_address:(.*)$' line='broadcast_rpc_address: {{ inventory_hostname }}'"
 
 #- name: Cassandra Java environment variable file
 #  template: src={{ cassandra_env_file }} dest=/etc/dse/cassandra/cassandra-env.sh owner={{ cassandra_user }} mode=0640

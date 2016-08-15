@@ -30,7 +30,7 @@ function create_cassandra_stack {
     ansible-playbook -vvvv -i ec2.py projects/cassandra/restart_cassandra.yml -e "app_name=${db_name} env=${env}"
 
     # Create keyspace for cqlmigrate
-    #ansible-playbook -vvvv -i ec2.py projects/cassandra/create-cqlmigrate-locks-keyspace.yml -e "app_name=${db_name} env=${env} zone=a"
+    ansible-playbook -vvvv -i ec2.py projects/cassandra/create-cqlmigrate-locks-keyspace.yml -e "app_name=${db_name} env=${env}"
 }
 
 ############################

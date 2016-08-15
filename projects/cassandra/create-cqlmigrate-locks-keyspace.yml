@@ -1,4 +1,4 @@
-- hosts: tag_Name_{{ env }}_{{ app_name }}_db_{{ zone }}
+- hosts: tag_Name_{{ env }}_{{ app_name }}_db_*
   become: yes
   gather_facts: false
   vars_files:

@@ -1,0 +1,8 @@
+---
+- name: create `cqlmigrate` keyspace
+  shell: "/usr/bin/cqlsh --execute=\"{{ keyspace_query }}\" {{ inventory_hostname }} {{ cassandra_cqlsh_port }}"
+  when: " {{ cassandra_node_filter }} "
+
+- name: create `locks` table
+  shell: "/usr/bin/cqlsh --execute=\"{{ table_query }}\" {{ inventory_hostname }} {{ cassandra_cqlsh_port }}"
+  when: " {{ cassandra_node_filter }} "

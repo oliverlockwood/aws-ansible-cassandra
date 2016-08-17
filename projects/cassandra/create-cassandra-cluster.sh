@@ -21,6 +21,9 @@ function create_cassandra_stack {
     ansible-playbook -vvvv -i local projects/cassandra/create_cluster.yml -e "app_name=${db_name} env=${env} zone=a varfile=${varfile}"
     ansible-playbook -vvvv -i local projects/cassandra/create_cluster.yml -e "app_name=${db_name} env=${env} zone=b varfile=/tmp/bob"
 
+    # Clear the Ansible cache
+    python ec2.py --refresh-cache
+
     # Install Cassandra in zones A and B
     local extra_vars=$(head -1 ${varfile})
     ansible-playbook -vvvv -i ec2.py projects/cassandra/install_cassandra.yml -e "app_name=${db_name} env=${env} zone=a ${extra_vars}"

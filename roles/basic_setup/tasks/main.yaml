@@ -9,3 +9,6 @@
 
 - name: Install JRE
   apt: pkg={{ java_version }} state=latest update-cache=yes force=yes
+
+- name: Add newline to all CURL output
+  lineinfile: dest=/home/ubuntu/.curlrc state=present line="-w \"\\n\\n\"" create=yes

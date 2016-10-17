@@ -1,8 +1,14 @@
 - name: Add datastax repository apt key
   apt_key: url=https://debian.datastax.com/debian/repo_key state=present
 
-- name: Add datastax community repository to apt sources list
+- name: Add datastax community repository to apt sources list (includes versions up to 3.0.x)
   shell: echo "deb http://debian.datastax.com/community stable main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
+
+- name: Add Apache Cassandra repository apt key
+  apt_key: keyserver=pgp.mit.edu id=749D6EEC0353B12C state=present
+
+- name: Add Apache Cassandra 3.7 repository
+  apt_repository: repo='deb http://www.apache.org/dist/cassandra/debian 37x main' state=present
 
 - name: Update apt cache
   apt: update_cache=yes

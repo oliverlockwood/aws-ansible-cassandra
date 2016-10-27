@@ -6,5 +6,5 @@
     - "vars/main.yml"
     - "vars/{{ app_name }}.yml"
   roles:
-    - basic_setup
+    - java
     - cassandra

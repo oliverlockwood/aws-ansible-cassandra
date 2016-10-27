@@ -1,0 +1,9 @@
+- name: Set up machines
+  hosts: tag_Name_{{ env }}_{{ app_name }}_app_{{ zone }}
+  become: yes
+  gather_facts: true
+  vars_files:
+    - "vars/main.yml"
+  roles:
+    - { role: rvm_io.rvm1-ruby, tags: ruby, become: yes }
+    - txgh

@@ -1,0 +1,37 @@
+app_ami: "{{ aws_ami }}"
+app_group: "{{ env }}-SG{{ app_name }}Node"
+app_groups: "['{{ app_group }}']"
+
+app_instance_devices: ['/dev/xvdb', '/dev/xvdc']
+
+aws_ami: ami-d41d58a7
+
+#######
+
+security_group_def:
+  app:
+    - name: "{{ app_group }}"
+      description: Dummy port for {{ app_name }}
+      port: 9292
+
+subnet_access: [ "{{ app_subnet_1a }}", "{{ app_subnet_1b }}", "{{ app_subnet_1a }}", "{{ app_subnet_1b }}" ]
+
+config:
+  app:
+    ami: "{{ app_ami }}"
+    group: "{{ app_groups }}"
+    a:
+      instance_type: "{{ app_size }}"
+      instance_count: "{{ app_count_1a }}"
+      subnet_id: "{{ aws_app_subnet_1a }}"
+      subnet_ip: "{{ app_subnet_1a }}"
+
+disks:
+  - name: txgh
+    block_devices: "{{ app_instance_devices }}"
+    mount_point: /var/lib/txgh
+    fstype: ext4
+    is_secure: yes
+
+# Monitoring
+app_monitoring_hostgroup: txgh

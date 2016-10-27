@@ -1,0 +1,31 @@
+- name: Install the 'Development tools' package group
+  yum: name="@Development tools" state=present
+
+- name: Install dependencies
+  package: name="{{ item }}" state=present
+  with_items: "{{ dependencies }}"
+
+- name: Template TXGH environment vars file
+  template: src=txgh_env.j2 dest=/home/ec2-user/.txgh_env mode=0644 owner=ec2-user group=ec2-user
+
+- name: Add link to TXGH environment vars file
+  lineinfile: dest=/home/ec2-user/.bash_profile state=present line="source ~/.txgh_env" create=yes
+
+- name: Clone txgh
+  git: repo=git://github.com/transifex/txgh.git dest=/home/ec2-user/txgh
+  become: yes
+  become_user: ec2-user
+
+- name: Install TXGH bundle
+  shell: /usr/local/rvm/gems/ruby-2.2.2/bin/bundle install
+  args:
+    chdir: /home/ec2-user/txgh
+  become: yes
+  become_user: ec2-user
+
+- name: Run TXGH server
+  shell: /usr/local/rvm/gems/ruby-2.2.2/bin/bundle exec rackup
+  args:
+    chdir: /home/ec2-user/txgh
+  become: yes
+  become_user: ec2-user

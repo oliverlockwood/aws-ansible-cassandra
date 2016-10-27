@@ -1,0 +1,24 @@
+- hosts: local
+  connection: local
+  gather_facts: False
+  vars_files:
+    - "vars/main.yml"
+    - "vars/{{ env }}.yml"
+    - "vars/{{ app_name }}.yml"
+  vars:
+    instance_tier: app
+  pre_tasks:
+    - name: Create security group for a tier
+      ec2_group:
+        name: "{{ app_group }}_cassandra"
+        description: "Enable TXGH port 9292 for {{ app_name }}"
+        vpc_id: "{{ aws_vpc }}"
+        region: "{{ aws_region }}"
+        rules:
+        - proto: tcp
+          from_port: 9292
+          to_port: 9292
+          cidr_ip: [ "0.0.0.0/0" ]
+      ignore_errors: yes
+  roles:
+    - ec2

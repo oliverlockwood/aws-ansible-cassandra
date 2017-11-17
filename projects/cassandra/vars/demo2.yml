@@ -1,0 +1,11 @@
+# Same as demo.yml but with a different keypair setup....
+aws_region: eu-west-1
+aws_vpc: vpc-3e84365a
+vpc_subnet: 172.31.0.0/16
+domain_cidr: "{{ vpc_subnet }}"
+aws_account_id: 520661294729
+
+aws_db_subnet_1a: subnet-71198615
+db_subnet_1a: 172.31.0.0/16
+aws_db_subnet_1b: subnet-99c148ef
+db_subnet_1b: 172.31.0.0/16
